@@ -3,60 +3,86 @@ package com.example.dynamiccontentexample
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.animation.slideInVertically
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material.Button
 import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Surface
 import androidx.compose.material.Text
+import androidx.compose.material.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.tooling.preview.Preview
-import com.example.dynamiccontentexample.ui.theme.DynamicContentExampleTheme
 
-val namesList: ArrayList<String> = arrayListOf("John", "Michael", "Danny", "Jana", "Manuela")
+//val namesList: ArrayList<String> = arrayListOf("John", "Michael", "Danny")
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            GreetingList(namesList)
+            MainScreen()
         }
     }
 }
 
 @Composable
-fun GreetingList(names: List<String>) {
+fun MainScreen() {
+    val greetingListState = remember {
+        mutableStateListOf<String>("John", "Michael")
+    }
+
+    val newNameStateContent = remember { mutableStateOf("") }
+
     Column(
         modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.SpaceEvenly,
-        horizontalAlignment = Alignment.CenterHorizontally
+        horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-        for (name in names) {
-            Greeting(name)
-        }
+        GreetingList(
+            greetingListState,
+            { greetingListState.add(newNameStateContent.value,) },
+            newNameStateContent.value,
+            { newName -> newNameStateContent.value = newName })
 
-        Button(onClick = { namesList.add("New Name") }) {
-            Text("add new name")
-        }
+    }
+}
+
+
+@Composable
+fun GreetingList(
+    namesList: List<String>,
+    buttonClick: () -> Unit,
+    textFieldValue: String,
+    textFieldUpdate: (newName: String) -> Unit
+) {
+
+
+    for (name in namesList) {
+        Greeting(name)
     }
 
+    TextField(value = textFieldValue, onValueChange = textFieldUpdate)
+
+    Button(onClick = buttonClick) {
+        Text("add new name")
+    }
 }
 
 @Composable
 fun Greeting(name: String) {
     Text(
         text = "Hello $name!",
-        style = MaterialTheme.typography.h4
+        style = MaterialTheme.typography.h5
     )
 }
 
 @Preview(showBackground = true)
 @Composable
 fun DefaultPreview() {
-    GreetingList(namesList)
+    MainScreen()
 }
