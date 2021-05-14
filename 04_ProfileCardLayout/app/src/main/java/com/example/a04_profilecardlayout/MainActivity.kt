@@ -17,15 +17,11 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.transform.CircleCropTransformation
 import com.example.a04_profilecardlayout.ui.theme.MyTheme
 import com.example.a04_profilecardlayout.ui.theme.lightGreen
-import com.google.accompanist.coil.CoilImage
-import com.google.accompanist.coil.CoilPainterDefaults
 import com.google.accompanist.coil.rememberCoilPainter
 
 
@@ -98,11 +94,7 @@ fun ProfilePicture(pictureUrl: String, onlineStatus: Boolean) {
         shape = CircleShape,
         border = BorderStroke(
             width = 2.dp,
-            color = if (onlineStatus) {
-                lightGreen
-            } else {
-                Color.Red
-            }
+            color = setOnlineStatus(onlineStatus).color
         ),
         modifier = Modifier
             .padding(16.dp)
@@ -143,12 +135,7 @@ fun ProfileContent(userName: String, onlineStatus: Boolean) {
         }
         CompositionLocalProvider(LocalContentAlpha provides ContentAlpha.medium) {
             Text(
-                text = if (onlineStatus) {
-                    "Active now"
-                } else {
-                    "Offline"
-                },
-
+                text = setOnlineStatus(onlineStatus).text,
                 style = MaterialTheme.typography.body2
             )
         }
